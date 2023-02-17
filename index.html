@@ -30,14 +30,15 @@
         const context = canvas.getContext('2d')
         const start = canvas.width / 2
 
-        input.oninput = () => drawEllipse(~~input.value)
+        input.oninput = () => drawEllipse(~~input.value, 1.2)
 
-        function drawEllipse(size) {
+        function drawEllipse(size, res) {
             context.clearRect(0, 0, canvas.width, canvas.height)
             context.fillStyle = 'black'
-            for (let t = 0; t < size * 150; t++) {
-                const x = start + Math.cos(t) * size
-                const y = start + Math.sin(t) * size
+            for (let t = 0; t < size * res; t++) {
+                const relative = t / (size * res) * Math.PI * 2
+                const x = start + -Math.cos(relative) * size
+                const y = start + -Math.sin(relative) * size
                 context.fillRect(x, y, 1, 1)
             }
         }
@@ -53,7 +54,7 @@
             context.fillRect(start - 1, start - size, 150, 1)
         }
 
-        drawCurve(250, 1.2)
+        drawEllipse(150, 10)
     </script>
 </body>
 </html>
