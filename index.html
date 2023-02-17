@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elipse</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        canvas {
+            width: 1500px;
+            height: 1500px;
+            border: 1px solid black;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <canvas width="1500px" height="1500px"></canvas>
+    <input type="range" min="5" max="500" value="5">
+    <script>
+        const input = document.querySelector('input')
+        const canvas = document.querySelector('canvas')
+        const context = canvas.getContext('2d')
+        const start = canvas.width / 2
+
+        input.oninput = () => drawEllipse(~~input.value)
+
+        function drawEllipse(size) {
+            context.clearRect(0, 0, canvas.width, canvas.height)
+            context.fillStyle = 'black'
+            for (let t = 0; t < size * 150; t++) {
+                const x = start + Math.cos(t) * size
+                const y = start + Math.sin(t) * size
+                context.fillRect(x, y, 1, 1)
+            }
+        }
+
+        function drawCurve(size, res) {
+            context.fillStyle = 'black'
+            for (let t = 1; t <= size * res; t++) {
+                const relative = t / (size * res) * Math.PI / 2
+                const x = start + -Math.cos(relative) * size
+                const y = start + -Math.sin(relative) * size
+                context.fillRect(x, y, 1, 1)
+            }
+            context.fillRect(start - 1, start - size, 150, 1)
+        }
+
+        drawCurve(250, 1.2)
+    </script>
+</body>
+</html>
