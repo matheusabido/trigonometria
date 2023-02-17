@@ -12,25 +12,49 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            flex-direction: column;
+            gap: 10px;
         }
         canvas {
-            width: 1500px;
-            height: 1500px;
+            width: 90vmin;
+            height: 90vmin;
             border: 1px solid black;
             background-color: #f0f0f0;
         }
     </style>
 </head>
 <body>
+    <input id="circle" type="range" min="5" max="500" value="5">
+    <input type="button" id="curve" value="Generate curve">
+    <div>
+        <input type="checkbox" id="line">
+        <label for="line">Line</label>
+        <input type="checkbox" id="cat">
+        <label for="cat">Show cathetus</label>
+    </div>
     <canvas width="1500px" height="1500px"></canvas>
-    <input type="range" min="5" max="500" value="5">
     <script>
-        const input = document.querySelector('input')
+        const circle = document.querySelector('#circle')
+        const curve = document.querySelector('#curve')
+        const line = document.querySelector('#line')
+        const cat = document.querySelector('#cat')
+        
         const canvas = document.querySelector('canvas')
+        const bounds = canvas.getBoundingClientRect()
+
         const context = canvas.getContext('2d')
         const start = canvas.width / 2
 
-        input.oninput = () => drawEllipse(~~input.value, 10)
+        let shouldDrawLine = false
+        canvas.onmousemove = e => {
+            if (!shouldDrawLine) return
+            const x = e.clientX - bounds.x
+            const y = e.clientY - bounds.y
+            drawLine(x, y)
+        }
+        circle.oninput = () => drawEllipse(~~circle.value, 5)
+        curve.onclick = () => drawCurve(150, 1)
+        line.onchange = () => shouldDrawLine = line.checked
 
         function drawEllipse(size, res) {
             context.clearRect(0, 0, canvas.width, canvas.height)
@@ -39,22 +63,44 @@
                 const relative = t / (size * res) * Math.PI * 2
                 const x = start + -Math.cos(relative) * size
                 const y = start + -Math.sin(relative) * size
-                context.fillRect(x, y, 1, 1)
+                context.fillRect(x, y, 5, 5)
             }
         }
 
         function drawCurve(size, res) {
+            context.clearRect(0, 0, canvas.width, canvas.height)
             context.fillStyle = 'black'
             for (let t = 1; t <= size * res; t++) {
                 const relative = t / (size * res) * Math.PI / 2
                 const x = start + -Math.cos(relative) * size
                 const y = start + -Math.sin(relative) * size
-                context.fillRect(x, y, 1, 1)
+                context.fillRect(x, y, 1, 2)
             }
-            context.fillRect(start - 1, start - size, 150, 1)
+            context.fillRect(start, start - size, 150, 2)
         }
 
-        drawCurve(150, 1.2)
+        function drawLine(coordX, coordY) {
+            context.clearRect(0, 0, canvas.width, canvas.height)
+            const x = coordX - (bounds.width/2)
+            const y = coordY - (bounds.height/2)
+            const z = Math.sqrt(x**2 + y**2)
+            
+            const relative = 1500 / bounds.width
+            if (cat.checked) {
+                context.fillRect(start, start, x * relative, 5)
+                context.fillRect(start + x * relative, start, 5, y * relative)
+            }
+
+            const cos = (x**2+z**2-y**2)/(2*x*z)
+            let sin = Math.sqrt(1 - cos**2)
+            if (y < 0) sin *=-1
+
+            for (let i = 0; i < z; i++) {
+                context.fillRect(start + i * cos * relative,
+                                 start + i * sin * relative,
+                                5, 5)
+            }
+        }
     </script>
 </body>
 </html>
