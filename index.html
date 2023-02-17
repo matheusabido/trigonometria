@@ -30,7 +30,7 @@
         const context = canvas.getContext('2d')
         const start = canvas.width / 2
 
-        input.oninput = () => drawEllipse(~~input.value, 1.2)
+        input.oninput = () => drawEllipse(~~input.value, 10)
 
         function drawEllipse(size, res) {
             context.clearRect(0, 0, canvas.width, canvas.height)
@@ -54,7 +54,7 @@
             context.fillRect(start - 1, start - size, 150, 1)
         }
 
-        drawEllipse(150, 10)
+        drawCurve(150, 1.2)
     </script>
 </body>
 </html>
